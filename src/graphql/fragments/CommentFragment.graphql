@@ -1,0 +1,15 @@
+fragment CommentFragment on Comment {
+  id
+  body
+  rating
+  voteStatus
+  postId
+  parentId
+  createdAt
+  updatedAt
+
+  authorId
+  author {
+    ...UserFragment
+  }
+}

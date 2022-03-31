@@ -1,0 +1,3 @@
+mutation WriteComment($postId: Int!, $body: String!, $parentId: Int) {
+  writeComment(postId: $postId, body: $body, parentId: $parentId)
+}
