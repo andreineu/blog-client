@@ -7,6 +7,7 @@ import Link from "../Link";
 import { CommentVote } from "./CommentVote";
 
 interface CommentHeadProps {
+  avatar?: string;
   authorId: number;
   username: string;
   rating: number;
@@ -16,6 +17,7 @@ interface CommentHeadProps {
 }
 
 export const CommentHead: React.FC<CommentHeadProps> = ({
+  avatar,
   authorId,
   username,
   createdAt,
@@ -32,11 +34,14 @@ export const CommentHead: React.FC<CommentHeadProps> = ({
           commentId={commentId}
           rating={rating}
         />
-        <Link href={`/`}>
-          <Avatar sx={{ height: 20, width: 20, cursor: "pointer" }}>A</Avatar>
+        <Link href={`/user/${username}`}>
+          <Avatar
+            sx={{ height: 20, width: 20, cursor: "pointer" }}
+            src={avatar}
+          />
         </Link>
         <Link
-          href={`/`}
+          href={`/user/${username}`}
           sx={{ color: (th) => th.palette.text.primary }}
           underline="hover"
         >

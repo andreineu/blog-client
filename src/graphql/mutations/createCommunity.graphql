@@ -1,0 +1,9 @@
+mutation CreateCommunity($name: String!, $summary: String!, $rules: String!) {
+  createCommunity(name: $name, summary: $summary, rules: $rules) {
+    errors {
+      field
+      message
+    }
+    created
+  }
+}

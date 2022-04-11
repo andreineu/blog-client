@@ -1,0 +1,13 @@
+mutation updateCommunity(
+  $communityId: Int!
+  $avatar: String
+  $rules: String
+  $summary: String
+) {
+  updateCommunity(
+    communityId: $communityId
+    avatar: $avatar
+    rules: $rules
+    summary: $summary
+  )
+}

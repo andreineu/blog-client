@@ -1,10 +1,10 @@
 import React from "react";
-import { ApolloCache, gql } from "@apollo/client";
 import { Box, IconButton } from "@mui/material";
 
 import { useMeQuery, useVoteCommentMutation } from "../../generated/graphql";
-import { ArrowUpIcon, ArrowDownIcon } from "../Icons";
-import { useSnackbar } from "../SnackBar";
+import { ChevronUpIcon, ChevronDownIcon } from "../Icons";
+import { useSnackbar } from "../../hooks/useSnackbar";
+import { updateCommentVote } from "../../utils/cache/updateCommentVote";
 
 interface CommentVoteProps {
   authorId: number;
@@ -13,93 +13,63 @@ interface CommentVoteProps {
   rating: number;
 }
 
-const updateVote = (cache: ApolloCache<any>, voteValue: number, id: string) => {
-  cache.updateFragment<{
-    rating: number;
-    voteStatus: number | null;
-  }>(
-    {
-      id,
-      fragment: gql`
-        fragment myComment on Comment {
-          rating
-          voteStatus
-        }
-      `
-    },
-    (data) => ({
-      rating: data?.rating! + voteValue,
-      voteStatus: data?.voteStatus! + voteValue || null
-    })
-  );
-};
-
 export const CommentVote: React.FC<CommentVoteProps> = ({
   authorId,
   commentId,
   voteStatus = 0,
   rating
 }) => {
-  const [vote] = useVoteCommentMutation();
-  const { data } = useMeQuery();
   const { addSnackItem } = useSnackbar();
-  const handleUpvote = async () => {
+
+  const { data, error } = useMeQuery();
+  const [vote] = useVoteCommentMutation();
+
+  const handleVote = async (value: 1 | -1) => {
     if (!data?.me) {
-      addSnackItem({ message: "To vote login first", severity: "error" });
+      addSnackItem({ message: "You are not authenticated", severity: "error" });
       return;
     }
+
     if (authorId === data.me?.id) {
       addSnackItem({
-        message: "You cannot upvote your comment",
+        message: "You cannot vote on your comments",
         severity: "warning"
       });
       return;
     }
-    if (voteStatus === 1) return;
+
+    if (voteStatus === value) return;
+
     await vote({
-      variables: { commentId, value: 1 },
+      variables: { commentId, value },
+      optimisticResponse: {
+        __typename: "Mutation",
+        voteComment: { message: "voted", voted: true }
+      },
       update: (cache) => {
-        updateVote(cache, 1, `Comment:${commentId}`);
+        updateCommentVote(cache, value, `Comment:${commentId}`);
       }
     });
   };
 
-  const handleDownvote = async () => {
-    if (!data?.me) {
-      addSnackItem({ message: "To vote login first", severity: "error" });
-      return;
-    }
-    if (authorId === data.me?.id) {
-      addSnackItem({
-        message: "You cannot downvote your comment",
-        severity: "warning"
-      });
-      return;
-    }
-    if (voteStatus === -1) return;
-    await vote({
-      variables: { commentId, value: -1 },
-      update: (cache) => {
-        updateVote(cache, -1, `Comment:${commentId}`);
-      }
-    });
-  };
   return (
     <Box alignItems="center" sx={{ display: "flex" }}>
       <IconButton
+        data-testid="upvote-button"
         color={voteStatus === 1 ? "success" : "default"}
         aria-label="upvote"
-        onClick={handleUpvote}
+        onClick={() => handleVote(1)}
       >
-        <ArrowUpIcon sx={{ width: 12, height: 12 }} />
+        <ChevronUpIcon sx={{ width: 12, height: 12 }} />
       </IconButton>
       {rating}
       <IconButton
+        data-testid="downvote-button"
         color={voteStatus === -1 ? "error" : "default"}
         aria-label="downvote"
-        onClick={handleDownvote}
+        onClick={() => handleVote(-1)}
       >
-        <ArrowDownIcon sx={{ width: 12, height: 12 }} />
+        <ChevronDownIcon sx={{ width: 12, height: 12 }} />
       </IconButton>
     </Box>
   );

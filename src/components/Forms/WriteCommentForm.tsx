@@ -11,7 +11,8 @@ import {
   useMeQuery,
   useWriteCommentMutation
 } from "../../generated/graphql";
-import { useSnackbar } from "../SnackBar";
+
+import { useSnackbar } from "../../hooks/useSnackbar";
 
 const validationSchema = yup.object({
   body: yup.string().min(3).required()

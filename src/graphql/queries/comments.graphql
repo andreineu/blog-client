@@ -1,4 +1,5 @@
 query Comments($postId: Int!) {
   comments(postId: $postId) {
-    ...CommentFragment
+    ...Comment
+  }
 }

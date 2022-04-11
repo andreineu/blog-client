@@ -1,5 +1,11 @@
-fragment UserFragment on User {
+fragment User on User {
   id
   username
   createdAt
+  avatar
+  email
+  followStatus
+  rating
+  totalFollowers
+  totalPosts
 }

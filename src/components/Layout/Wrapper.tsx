@@ -1,40 +1,25 @@
-import { Box, BoxProps, Paper, PaperProps } from "@mui/material";
-import * as React from "react";
+import React from "react";
+import { Container, Paper, PaperProps } from "@mui/material";
 
-interface WrapperProps extends PaperProps {
+export interface WrapperProps extends PaperProps {
   noPadding?: boolean;
-
-  size?: "small" | "medium";
   children?: React.ReactNode;
-  transparent?: boolean;
 }
 
 export const Wrapper: React.FC<WrapperProps> = ({
   noPadding = false,
-  transparent = false,
-  size = "medium",
   children,
-  sx,
-
+  sx = {},
   ...props
 }) => {
-  const width = size === "small" ? 600 : 800;
-
   let paddings = { px: 3, py: 2 };
   if (noPadding) paddings = { px: 0, py: 0 };
 
   return (
-    <Paper
-      sx={{
-        m: "auto",
-        width,
-        position: "relative",
-        ...paddings,
-        ...sx
-      }}
-      {...props}
-    >
-      {children}
-    </Paper>
+    <Container maxWidth="md" disableGutters>
+      <Paper sx={[paddings, ...(Array.isArray(sx) ? sx : [sx])]} {...props}>
+        {children}
+      </Paper>
+    </Container>
   );
 };

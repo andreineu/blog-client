@@ -2,29 +2,39 @@ import React from "react";
 import { TransitionGroup } from "react-transition-group";
 import { Alert, Collapse, Box, Snackbar } from "@mui/material";
 
-import { useSnackbar } from ".";
+import { useSnackbar } from "../../hooks/useSnackbar";
 
 export const SnackBar: React.FC = ({}) => {
-  const { items: errors, deleteSnackItem } = useSnackbar();
+  const { items, deleteSnackItem } = useSnackbar();
+
+  const autoClose = (id: number) => {
+    setTimeout(() => deleteSnackItem(id), 3000);
+  };
 
   return (
     <>
-      {errors && (
+      {items && (
         <Snackbar open={true} autoHideDuration={6000}>
           <Box>
             <TransitionGroup>
-              {errors.map((err) => (
-                <Collapse key={err.id}>
-                  <Alert
-                    sx={{ m: 2 }}
-                    variant="filled"
-                    severity={err.severity}
-                    onClose={() => deleteSnackItem(err.id)}
-                  >
-                    {err.message}
-                  </Alert>
-                </Collapse>
-              ))}
+              {items.map((snack) => {
+                if (!snack.noAutoHide) {
+                  autoClose(snack.id);
+                }
+                return (
+                  <Collapse key={snack.id}>
+                    <Alert
+                      data-testid="snack-item"
+                      sx={{ m: 2 }}
+                      variant="filled"
+                      severity={snack.severity || "error"}
+                      onClose={() => deleteSnackItem(snack.id)}
+                    >
+                      {snack.message}
+                    </Alert>
+                  </Collapse>
+                );
+              })}
             </TransitionGroup>
           </Box>
         </Snackbar>

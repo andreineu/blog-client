@@ -1,43 +1,24 @@
-// import { MoreHoriz } from "@mui/icons-material";
-import {
-  Avatar,
-  Box,
-  Button,
-  Skeleton,
-  Tooltip,
-  Typography
-} from "@mui/material";
-import { formatDistanceToNow } from "date-fns";
-import { ru } from "date-fns/locale";
-import Link from "../Link";
 import React from "react";
-import { ArrowDownIcon } from "../Icons";
+import { Avatar, Box, Typography } from "@mui/material";
+import { formatDistanceToNow } from "date-fns";
 
-const tooltipProps = {
-  tooltip: {
-    sx: {
-      bgcolor: "background.paper",
-      p: 0,
-      boxShadow: 14
-    }
-  },
-  arrow: {
-    sx: {
-      color: "background.paper"
-    }
-  }
-};
+import Link from "../Link";
+
+import { CommunityBase } from "../../generated/graphql";
+import { CommunityBadge } from "../Community";
 
 interface PostHeaderProps {
-  communityId?: string;
+  community?: CommunityBase | null;
   title: string;
   createdAt: string;
   username: string;
+  avatar?: string;
   postId: number;
 }
 
 export const PostHeader: React.FC<PostHeaderProps> = ({
-  // communityId
+  community,
+  avatar,
   title,
   createdAt,
   username,
@@ -53,13 +34,12 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
           position: "relative"
         }}
       >
-        <Avatar sx={{ height: 20, width: 20 }}>A</Avatar>
+        <Avatar sx={{ height: 20, width: 20 }} src={avatar} />
         <Link
-          // color="whitesmoke"
           sx={{ color: (th) => th.palette.text.primary }}
           underline="hover"
           variant="subtitle1"
-          href={`/`}
+          href={`/user/${username}`}
         >
           {username}
         </Link>
@@ -67,11 +47,11 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
         <Typography color="text.secondary" sx={{ fontSize: 14 }}>
           {formatDistanceToNow(new Date(+createdAt), { addSuffix: true })}
         </Typography>
+        {community && <CommunityBadge community={community} />}
       </Box>
       <Box>
         <Link
           href={`/post/${postId}`}
-          // color="whitesmoke"
           sx={{ color: (th) => th.palette.text.primary }}
           underline="hover"
           variant="h5"

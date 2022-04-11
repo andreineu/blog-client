@@ -1,6 +1,6 @@
 type Item = {
-  id: number;
-  parentId?: number | null;
+  id: number | string;
+  parentId?: number | string | null;
 };
 
 export type TreeItem<T extends Item> = T & { children: TreeItem<T>[] };

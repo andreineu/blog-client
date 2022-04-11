@@ -1,0 +1,3 @@
+mutation FollowCommunity($communityId: Int!, $action: FollowAction!) {
+  followCommunity(communityId: $communityId, action: $action)
+}

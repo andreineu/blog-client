@@ -1,0 +1,15 @@
+fragment Community on Community {
+  id
+  name
+  summary
+  avatar
+  rules
+  totalPosts
+  totalUsers
+  followStatus
+  createdAt
+  authorId
+  author {
+    ...Author
+  }
+}

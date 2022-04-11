@@ -1,15 +1,19 @@
-fragment PostFragment on Post {
+fragment Post on Post {
   id
   authorId
   title
   body
   rating
+  totalComments
+  totalViews
   voteStatus
   createdAt
   updatedAt
   author {
-    username
-    id
-    email
+    ...Author
+  }
+  communityId
+  community {
+    ...CommunityBase
   }
 }

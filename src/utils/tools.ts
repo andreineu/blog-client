@@ -1,80 +1,47 @@
-//@ts-ignore
+//@ts-nocheck
 import Image from "@editorjs/image";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { firebaseStorage } from "./firebase";
+import Header from "@editorjs/header";
+import List from "@editorjs/list";
+import Paragraph from "@editorjs/paragraph";
+import Embed from "@editorjs/embed";
+import Code from "@editorjs/code";
+import LinkTool from "@editorjs/link";
+import Quote from "@editorjs/quote";
+import Marker from "@editorjs/marker";
+import CheckList from "@editorjs/checklist";
+import Delimiter from "@editorjs/delimiter";
+import InlineCode from "@editorjs/inline-code";
+
+import { uploadFile } from "./uploadFile";
 
 export const EditorTools = {
+  header: {
+    class: Header,
+    inlineToolbar: ["link"]
+  },
+  list: {
+    class: List,
+    inlineToolbar: true
+  },
+  paragraph: {
+    class: Paragraph,
+    inlineToolbar: true
+  },
+  embed: Embed,
+  code: Code,
+  linkTool: LinkTool,
+  quote: Quote,
+  marker: Marker,
+  checklist: CheckList,
+  delimiter: Delimiter,
+  inlineCode: InlineCode,
   image: {
     class: Image,
     config: {
       uploader: {
         uploadByFile(file: File) {
-          const metadata = {
-            contentType: "image/jpeg"
-          };
-
-          const storageRef = ref(firebaseStorage, "images/" + file.name);
-          const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-          const response = {
-            success: 0,
-            file: {
-              url: ""
-            }
-          };
-          // Listen for state changes, errors, and completion of the upload.
-          const p = new Promise((res, rej) => {
-            uploadTask.on(
-              "state_changed",
-              (snapshot) => {
-                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-                const progress =
-                  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                console.log("Upload is " + progress + "% done");
-                switch (snapshot.state) {
-                  case "paused":
-                    console.log("Upload is paused");
-                    break;
-                  case "running":
-                    console.log("Upload is running");
-                    break;
-                }
-              },
-              (error) => {
-                // A full list of error codes is available at
-                // https://firebase.google.com/docs/storage/web/handle-errors
-                switch (error.code) {
-                  case "storage/unauthorized":
-                    response.success = -1;
-                    rej(response);
-                    // User doesn't have permission to access the object
-                    break;
-                  case "storage/canceled":
-                    // User canceled the upload
-                    response.success = -1;
-                    rej(response);
-                    break;
-
-                  // ...
-
-                  case "storage/unknown":
-                    response.success = -1;
-                    rej(response);
-                    // Unknown error occurred, inspect error.serverResponse
-                    break;
-                }
-              },
-              () => {
-                // Upload completed successfully, now we can get the download URL
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                  // console.log("File available at", downloadURL);
-                  response.success = 1;
-                  response.file.url = downloadURL;
-                  res(response);
-                });
-              }
-            );
-          });
-          return p;
+          const promise = uploadFile({ file });
+          return promise;
         }
       }
     }

@@ -25,6 +25,7 @@ export const Comment: React.FC<CommentProps> = ({ comment }) => {
         }}
       >
         <CommentHead
+          avatar={comment.author.avatar || ""}
           authorId={comment.author.id}
           voteStatus={comment.voteStatus || 0}
           commentId={comment.id}
@@ -63,15 +64,14 @@ const CommentChildren: React.FC<CommentChildrenProps> = ({ comments }) => {
       </Box>
       <Box sx={{ position: "relative" }}>
         <Box
+          onClick={handleToggle}
           sx={{
             position: "absolute",
             zIndex: 10,
             px: 1,
-
             left: 0,
             top: 0,
             bottom: 0,
-
             "&:hover": {
               cursor: "pointer"
             },

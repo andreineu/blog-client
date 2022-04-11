@@ -1,0 +1,6 @@
+fragment CommunityBase on CommunityBase {
+  id
+  name
+  summary
+  avatar
+}

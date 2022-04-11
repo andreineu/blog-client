@@ -1,45 +1,35 @@
 import * as yup from "yup";
 
-import { useFormik } from "formik";
-import { useRouter } from "next/router";
+import { FormikConfig, useFormik } from "formik";
 import { Box, TextField, Typography } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 
-import { MeDocument, MeQuery, useLoginMutation } from "../../generated/graphql";
-import { toErrorMap } from "../../utils/toErrorMap";
+import { LoginMutationVariables } from "../../generated/graphql";
+
+type LoginFormValues = LoginMutationVariables;
+
+export type LoginFormSubmitFn = FormikConfig<LoginFormValues>["onSubmit"];
+
+let initialValues: LoginFormValues = {
+  usernameOrEmail: "",
+  password: ""
+};
 
 let validationSchema = yup.object({
   usernameOrEmail: yup.string().required("username or email is required"),
   password: yup.string().required().min(3)
 });
-interface LoginFormProps {}
 
-export const LoginForm: React.FC<LoginFormProps> = ({}) => {
-  const router = useRouter();
-  const [login] = useLoginMutation();
+interface LoginFormProps {
+  onSubmit: LoginFormSubmitFn;
+}
+
+export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   const formik = useFormik({
-    initialValues: {
-      usernameOrEmail: "",
-      password: ""
-    },
+    initialValues,
     validationSchema,
-    onSubmit: async (values, helpers) => {
-      const response = await login({
-        variables: values,
-        update: (cache, { data }) => {
-          cache.writeQuery<MeQuery>({
-            data: { me: data?.login.user },
-            query: MeDocument
-          });
-          cache.evict({ fieldName: "posts:{}" });
-        }
-      });
-      if (response.data?.login.errors) {
-        helpers.setErrors(toErrorMap(response.data?.login.errors));
-      } else {
-        router.push("/");
-      }
-    }
+    validateOnMount: true,
+    onSubmit
   });
   return (
     <Box
@@ -49,10 +39,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({}) => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 2,
-        m: "auto",
-        px: 3,
-        py: 2
+        gap: 2
       }}
     >
       <Typography variant="h5" component="h1">
@@ -81,7 +68,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({}) => {
         loading={formik.isSubmitting}
         type="submit"
         variant="contained"
-        disabled={!(Object.keys(formik.touched).length !== 0 && formik.isValid)}
+        disabled={!formik.isValid}
       >
         Login
       </LoadingButton>

@@ -1,52 +1,43 @@
 import * as yup from "yup";
 
-import { useFormik } from "formik";
-import { useRouter } from "next/router";
+import { FormikConfig, useFormik } from "formik";
+
 import { Box, TextField, Typography } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 
-import {
-  MeDocument,
-  MeQuery,
-  useRegisterMutation
-} from "../../generated/graphql";
+import { RegisterMutationVariables } from "../../generated/graphql";
 
-import { toErrorMap } from "../../utils/toErrorMap";
+type RegisterFormValues = RegisterMutationVariables;
+
+export type RegisterFormSubmitFn = FormikConfig<RegisterFormValues>["onSubmit"];
+
+let initialValues: RegisterFormValues = {
+  username: "",
+  password: "",
+  email: ""
+};
 
 let validationSchema = yup.object({
-  username: yup.string().required(),
+  username: yup
+    .string()
+    .matches(/^\S*$/, "no spaces!")
+    .trim("The username cannot include leading and trailing spaces")
+    .min(3, "The username needs to be at least 3 char")
+    .max(20, "The contact name cannot exceed 20 char")
+    .required(),
   email: yup.string().email().required(),
   password: yup.string().required().min(4)
 });
 
-export const RegisterForm = () => {
-  const router = useRouter();
-  const [register] = useRegisterMutation();
+interface RegisterFormProps {
+  onSubmit: RegisterFormSubmitFn;
+}
+
+export const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
   const formik = useFormik({
-    initialValues: {
-      username: "",
-      password: "",
-      email: ""
-    },
+    initialValues,
     validationSchema,
-    onSubmit: async (values, helpers) => {
-      const response = await register({
-        variables: values,
-        update: (cache, { data }) => {
-          cache.writeQuery<MeQuery>({
-            data: { me: data?.register.user },
-            query: MeDocument
-          });
-        }
-      });
-      const fieldErrors = response.data?.register.errors;
-      if (fieldErrors) {
-        helpers.setErrors(toErrorMap(fieldErrors));
-        console.log(fieldErrors);
-      } else {
-        router.push("/");
-      }
-    }
+    onSubmit
   });
 
   return (
@@ -57,10 +48,7 @@ export const RegisterForm = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 2,
-        m: "auto",
-        px: 3,
-        py: 2
+        gap: 2
       }}
     >
       <Typography variant="h5" component="h1">

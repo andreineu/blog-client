@@ -1,5 +1,5 @@
-export { WriteCommentForm } from "./WriteCommentForm";
+export * from "./WriteCommentForm";
 
-export { LoginForm } from "./LoginForm";
+export * from "./LoginForm";
 
-export { RegisterForm } from "./RegisterForm";
+export * from "./RegisterForm";

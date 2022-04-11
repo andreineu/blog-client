@@ -2,7 +2,8 @@ import { Box, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useMeQuery } from "../../generated/graphql";
 import { WriteCommentForm } from "../Forms";
-import { useSnackbar } from "../SnackBar";
+
+import { useSnackbar } from "../../hooks/useSnackbar";
 
 interface CommentFormProps {
   postId: number;

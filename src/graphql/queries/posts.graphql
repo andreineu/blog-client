@@ -1,7 +1,19 @@
-query Posts($cursor: String, $limit: Int!) {
-  posts(cursor: $cursor, limit: $limit) {
+query Posts(
+  $cursor: String
+  $limit: Int!
+  $username: String
+  $communityName: String
+  $sortKey: SortKeys
+) {
+  posts(
+    cursor: $cursor
+    limit: $limit
+    username: $username
+    sortKey: $sortKey
+    communityName: $communityName
+  ) {
     items {
-      ...PostFragment
+      ...Post
     }
 
     pageInfo {

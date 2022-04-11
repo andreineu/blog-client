@@ -1,7 +1,7 @@
 import React from "react";
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { Stack, Divider, Typography, Button, TextField } from "@mui/material";
+import { Stack, Divider, Typography } from "@mui/material";
 import { Comment } from "../../src/components/Comment";
 import { Layout, Wrapper } from "../../src/components/Layout";
 import { Post } from "../../src/components/Post";
@@ -29,32 +29,25 @@ const PostPage: NextPage<{}> = () => {
 
   const commentTree = createTree<CommentType>(commentData?.comments || []);
 
+  const post = data!.post!;
   return (
     <Layout>
-      {!data?.post && (
-        <Typography variant="h3" align="center">
-          no post found
-        </Typography>
-      )}
-
-      {data?.post && (
-        <>
-          <Stack sx={{ gap: 2 }} alignItems="flex-start">
-            <Post post={data.post} />
-            <Wrapper variant="outlined" noPadding>
-              {commentTree.map((c) => (
-                <React.Fragment key={c.id}>
-                  <Comment comment={c} />
-                  <Divider />
-                </React.Fragment>
-              ))}
-            </Wrapper>
-            <Wrapper variant="outlined">
-              <WriteCommentForm postId={data.post.id} />
-            </Wrapper>
-          </Stack>
-        </>
-      )}
+      <>
+        <Stack sx={{ gap: 2 }} alignItems="flex-start">
+          <Post post={post} />
+          <Wrapper variant="outlined" noPadding>
+            {commentTree.map((c) => (
+              <React.Fragment key={c.id}>
+                <Comment comment={c} />
+                <Divider />
+              </React.Fragment>
+            ))}
+          </Wrapper>
+          <Wrapper variant="outlined">
+            <WriteCommentForm postId={post.id} />
+          </Wrapper>
+        </Stack>
+      </>
     </Layout>
   );
 };
@@ -63,12 +56,14 @@ export const getServerSideProps: GetServerSideProps<{}> = async (ctx) => {
   const apolloClient = initializeApollo(null, ctx);
   const { pid } = ctx.params!;
 
-  await apolloClient.query<PostQuery, PostQueryVariables>({
+  const { data } = await apolloClient.query<PostQuery, PostQueryVariables>({
     query: PostDocument,
     variables: {
       id: parseInt(pid as string)
     }
   });
+
+  if (!data.post) return { redirect: { destination: "/not-found" } };
 
   return addApolloState(apolloClient, { props: {} });
 };

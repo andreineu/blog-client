@@ -12,7 +12,41 @@ export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 
-import { PostsQuery } from "../generated/graphql";
+import { CommunitiesQuery, PostsQuery } from "../generated/graphql";
+
+export const createApolloCache = () =>
+  new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          posts: {
+            keyArgs: ["$username", "communityName", "sortKey"],
+            merge(
+              existing: PostsQuery["posts"] | undefined,
+              incoming: PostsQuery["posts"]
+            ): PostsQuery["posts"] {
+              return {
+                ...incoming,
+                items: [...(existing?.items || []), ...incoming.items]
+              };
+            }
+          },
+          communities: {
+            keyArgs: [],
+            merge(
+              existing: CommunitiesQuery["communities"] | undefined,
+              incoming: CommunitiesQuery["communities"]
+            ): CommunitiesQuery["communities"] {
+              return {
+                ...incoming,
+                items: [...(existing?.items || []), ...incoming.items]
+              };
+            }
+          }
+        }
+      }
+    }
+  });
 
 export const createApolloClient = (ctx?: any) => {
   let cookie = "";
@@ -26,27 +60,8 @@ export const createApolloClient = (ctx?: any) => {
       credentials: "include",
       headers: { cookie } || undefined
     }),
-
-    cache: new InMemoryCache({
-      typePolicies: {
-        Query: {
-          fields: {
-            posts: {
-              keyArgs: [],
-              merge(
-                existing: PostsQuery["posts"] | undefined,
-                incoming: PostsQuery["posts"]
-              ): PostsQuery["posts"] {
-                return {
-                  ...incoming,
-                  items: [...(existing?.items || []), ...incoming.items]
-                };
-              }
-            }
-          }
-        }
-      }
-    })
+    cache: createApolloCache(),
+    connectToDevTools: true
   });
 };
 

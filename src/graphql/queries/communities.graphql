@@ -1,0 +1,11 @@
+query Communities($cursor: String, $limit: Int!, $sortKey: CommunitySortKeys) {
+  communities(cursor: $cursor, limit: $limit, sortKey: $sortKey) {
+    items {
+      ...Community
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}

@@ -1,13 +1,11 @@
 mutation Register($email: String!, $password: String!, $username: String!) {
-  register(
-    options: { email: $email, password: $password, username: $username }
-  ) {
+  register(email: $email, password: $password, username: $username) {
     errors {
       field
       message
     }
     user {
-      ...UserFragment
+      ...User
     }
   }
 }

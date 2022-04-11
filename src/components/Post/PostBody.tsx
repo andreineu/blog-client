@@ -1,7 +1,7 @@
 import React from "react";
 import parse, { HTMLReactParserOptions } from "html-react-parser";
 
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { parseToHtml } from "../../utils/parseBlocks";
 
 interface ParsedHtmlBodyProps {
@@ -32,9 +32,24 @@ interface PostBodyProps {
 }
 
 export const PostBody: React.FC<PostBodyProps> = ({ body }) => {
-  let C = <Typography variant="body2">{body}</Typography>;
   const html = parseBlocksToHtml(body);
+
+  let C = <Typography variant="body2">{body}</Typography>;
+
   if (html !== "not html") C = <ParsedHtmlBody htmlToParse={html} />;
 
-  return <>{C}</>;
+  return (
+    <Box
+      sx={{
+        my: 2,
+        img: {
+          maxWidth: "100%",
+          objectFit: "cover",
+          height: "auto"
+        }
+      }}
+    >
+      {C}
+    </Box>
+  );
 };
