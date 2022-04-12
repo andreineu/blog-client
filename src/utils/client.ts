@@ -8,11 +8,14 @@ import {
 import merge from "deepmerge";
 import isEqual from "lodash/isEqual";
 
+const uri = graphqlUri;
+
 export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 
 import { CommunitiesQuery, PostsQuery } from "../generated/graphql";
+import { graphqlUri } from "../constants";
 
 export const createApolloCache = () =>
   new InMemoryCache({
@@ -56,7 +59,7 @@ export const createApolloClient = (ctx?: any) => {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
     link: new HttpLink({
-      uri: "http://localhost:4000/graphql",
+      uri: uri,
       credentials: "include",
       headers: { cookie } || undefined
     }),
