@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { EditorTools } from "../../utils/tools";
@@ -20,6 +20,7 @@ export const useEditor: useEditor = (
   options = {}
 ) => {
   const [editorInstance, setEditor] = useState<EditorJS | null>(null);
+
   const {
     data: ignoreData,
     tools: ignoreTools,
@@ -47,7 +48,8 @@ export const useEditor: useEditor = (
         })
         .catch((e) => console.error("ERROR editor cleanup", e));
     };
-  }, [data, toolsList, editorOptions]);
+    //eslint-disable-next-line
+  }, [data, toolsList]);
 
   return { editor: editorInstance };
 };

@@ -13,7 +13,8 @@ import {
   Divider,
   MenuItem,
   alpha,
-  Typography
+  Typography,
+  Skeleton
 } from "@mui/material";
 
 import Link from "../Link";
@@ -49,6 +50,13 @@ const UserButtons: React.FC = () => {
   };
 
   const loggedIn = data?.me && !loading && !error;
+  if (loading)
+    return (
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Skeleton width={64} variant="text" />
+        <Skeleton width={40} height={40} variant="circular" />
+      </Box>
+    );
   if (!loggedIn)
     return (
       <>
