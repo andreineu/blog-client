@@ -36,7 +36,7 @@ export const CommunityCard: React.FC<CommuntyProps> = ({
       />
 
       <Stack sx={{ position: "relative", alignItems: "flex-start" }}>
-        <Link href={`/community/${name}`}>
+        <Link passHref href={`/community/${name}`}>
           <Typography
             variant="subtitle1"
             sx={{

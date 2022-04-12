@@ -42,7 +42,7 @@ export const PostList: React.FC<PostListProps> = ({ options }) => {
 
   useEffect(() => {
     refetch({ limit, sortKey });
-  }, [sortKey]);
+  }, [sortKey, limit, refetch]);
 
   const handleFetchMore = async () => {
     await fetchMore({

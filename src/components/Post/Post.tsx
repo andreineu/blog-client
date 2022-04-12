@@ -27,8 +27,9 @@ const StyledBox: React.FC = (props) => (
       color: "text.secondary",
       bgcolor: (th) => th.palette.background.default
     }}
-    children={props.children}
-  />
+  >
+    {props.children}
+  </Box>
 );
 
 interface PostProps {

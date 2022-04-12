@@ -47,7 +47,7 @@ export const useEditor: useEditor = (
         })
         .catch((e) => console.error("ERROR editor cleanup", e));
     };
-  }, [toolsList]);
+  }, [data, toolsList, editorOptions]);
 
   return { editor: editorInstance };
 };

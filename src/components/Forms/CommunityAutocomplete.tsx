@@ -5,11 +5,11 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
+
 import {
   Community as CommunityType,
-  useCommunitiesLazyQuery,
-  useCommunitiesQuery
+  useCommunitiesLazyQuery
 } from "../../generated/graphql";
 
 interface CommunityFieldProps {
@@ -28,14 +28,14 @@ type Community = {
 } & Partial<CommunityType>;
 
 export const CommunityField: React.FC<CommunityFieldProps> = ({ onChange }) => {
-  const [open, setOpen] = React.useState(false);
-  const [options, setOptions] = React.useState<readonly Community[]>([]);
+  const [open, setOpen] = useState(false);
+  const [options, setOptions] = useState<readonly Community[]>([]);
   const loading = open && options.length === 0;
 
-  const [loadComms] = useCommunitiesLazyQuery({
+  const [getCommunities] = useCommunitiesLazyQuery({
     variables: { limit: 50 }
   });
-  React.useEffect(() => {
+  useEffect(() => {
     let active = true;
 
     if (!loading) {
@@ -44,7 +44,7 @@ export const CommunityField: React.FC<CommunityFieldProps> = ({ onChange }) => {
 
     (async () => {
       if (active) {
-        const { data, error } = await loadComms();
+        const { data, error } = await getCommunities();
         if (error || !data?.communities.items) return;
 
         setOptions(data.communities.items);
@@ -54,7 +54,7 @@ export const CommunityField: React.FC<CommunityFieldProps> = ({ onChange }) => {
     return () => {
       active = false;
     };
-  }, [loading]);
+  }, [loading, getCommunities]);
   return (
     <Autocomplete
       fullWidth
