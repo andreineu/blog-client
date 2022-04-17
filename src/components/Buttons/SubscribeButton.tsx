@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ApolloCache, gql } from "@apollo/client";
 import { Button, SxProps, Theme } from "@mui/material";
 
@@ -7,6 +7,7 @@ import {
   useFollowCommunityMutation,
   useFollowUserMutation
 } from "../../generated/graphql";
+import { LoadingButton } from "@mui/lab";
 
 const updateCommunityStatus = (
   cache: ApolloCache<any>,
@@ -75,8 +76,10 @@ export const SubscribeButton: React.FC<SubscribeButtonProps> = ({
 }) => {
   const [followUser] = useFollowUserMutation();
   const [followCommunity] = useFollowCommunityMutation();
+  const [loading, setLoading] = useState(false);
 
   const handleClick = async (action: FollowAction) => {
+    setLoading(true);
     if (userId) {
       await followUser({
         variables: { action, userId },
@@ -87,11 +90,15 @@ export const SubscribeButton: React.FC<SubscribeButtonProps> = ({
             `User:${userId}`
           )
       });
+      setLoading(false);
+
       return;
     }
 
     await followCommunity({
       variables: { action, communityId: communityId! },
+      optimisticResponse: { __typename: "Mutation", followCommunity: true },
+
       update: (cache) =>
         updateCommunityStatus(
           cache,
@@ -99,12 +106,14 @@ export const SubscribeButton: React.FC<SubscribeButtonProps> = ({
           `Community:${communityId!}`
         )
     });
+    setLoading(false);
   };
 
   return (
     <>
       {followStatus === 1 ? (
-        <Button
+        <LoadingButton
+          loading={loading}
           onClick={() => handleClick(FollowAction.Unfollow)}
           size={size}
           sx={sx}
@@ -112,16 +121,17 @@ export const SubscribeButton: React.FC<SubscribeButtonProps> = ({
           color="secondary"
         >
           Unsubscribe
-        </Button>
+        </LoadingButton>
       ) : (
-        <Button
+        <LoadingButton
+          loading={loading}
           onClick={() => handleClick(FollowAction.Follow)}
           size={size}
           sx={sx}
           variant="contained"
         >
           Subscribe
-        </Button>
+        </LoadingButton>
       )}
     </>
   );

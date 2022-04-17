@@ -47,7 +47,9 @@ export const Post: React.FC<PostProps> = ({ post }) => {
         username={post.author.username}
         postId={post.id}
       />
+
       <Divider sx={{ mx: -3, my: 2 }} />
+
       <PostBody body={post.body} />
 
       <Divider sx={{ mx: -3 }} />
@@ -70,7 +72,7 @@ export const Post: React.FC<PostProps> = ({ post }) => {
             cursor: "pointer"
           }}
         >
-          <CommentIcon sx={{ width: 16, height: 16 }} /> {post.totalComments}
+          <CommentIcon sx={{ width: 18, height: 18 }} /> {post.totalComments}
         </Link>
       </StyledBox>
     </Wrapper>

@@ -69,11 +69,11 @@ export const PostVote: React.FC<PostVoteProps> = ({
       gap={0.25}
       sx={[
         !isMobile && { position: "absolute", left: -64, top: 0 },
-        isMobile && { flexDirection: "row", svg: { color: "text.secondary" } }
+        isMobile && { flexDirection: "row" }
       ]}
     >
       <IconButton
-        color={voteStatus === 1 ? "success" : "default"}
+        color={voteStatus === 1 ? "success" : "inherit"}
         aria-label="upvote"
         data-testid="upvote-button"
         onClick={() => handleVote(1)}
@@ -83,7 +83,7 @@ export const PostVote: React.FC<PostVoteProps> = ({
       </IconButton>
       <div data-testid="rating-counter">{rating}</div>
       <IconButton
-        color={voteStatus === -1 ? "error" : "default"}
+        color={voteStatus === -1 ? "error" : "inherit"}
         aria-label="downvote"
         data-testid="downvote-button"
         onClick={() => handleVote(-1)}

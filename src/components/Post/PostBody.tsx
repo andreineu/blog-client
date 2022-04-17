@@ -3,18 +3,7 @@ import parse, { HTMLReactParserOptions } from "html-react-parser";
 
 import { Box, Typography } from "@mui/material";
 import { parseToHtml } from "../../utils/parseBlocks";
-
-interface ParsedHtmlBodyProps {
-  htmlToParse: string;
-  options?: HTMLReactParserOptions;
-}
-
-export const ParsedHtmlBody: React.FC<ParsedHtmlBodyProps> = ({
-  htmlToParse,
-  options
-}) => {
-  return <>{parse(htmlToParse, options)}</>;
-};
+import { useWindowDimensions } from "../../hooks/useWindowDimensions";
 
 const parseBlocksToHtml = (s: string) => {
   try {
@@ -31,25 +20,33 @@ interface PostBodyProps {
   body: string;
 }
 
-export const PostBody: React.FC<PostBodyProps> = ({ body }) => {
+const PostContent: React.FC<PostBodyProps> = ({ body }) => {
   const html = parseBlocksToHtml(body);
-
   let C = <Typography variant="body2">{body}</Typography>;
+  if (html !== "not html") C = <>{parse(html)}</>;
 
-  if (html !== "not html") C = <ParsedHtmlBody htmlToParse={html} />;
+  return <>{C}</>;
+};
 
+export const PostBody: React.FC<PostBodyProps> = ({ body }) => {
+  const { width } = useWindowDimensions();
+
+  const isMobile = width < 1024;
   return (
     <Box
-      sx={{
-        my: 2,
-        img: {
-          maxWidth: "100%",
-          objectFit: "cover",
-          height: "auto"
-        }
-      }}
+      sx={[
+        {
+          my: 2,
+          img: {
+            maxWidth: "100%",
+            objectFit: "cover",
+            height: "auto"
+          }
+        },
+        isMobile && { mx: -3, mt: 0 }
+      ]}
     >
-      {C}
+      <PostContent body={body} />
     </Box>
   );
 };

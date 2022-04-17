@@ -6,8 +6,6 @@ import { useApolloClient } from "@apollo/client";
 import {
   Avatar,
   Box,
-  useScrollTrigger,
-  Slide,
   AppBar,
   Toolbar,
   Divider,
@@ -22,19 +20,8 @@ import { useLogoutMutation, useMeQuery } from "../../generated/graphql";
 import { Wrapper } from ".";
 import { Dropdown } from "../Dropdown";
 import { GroupIcon, LogoutIcon, PlusIcon } from "../Icons";
-
-interface HideOnScrollProps {
-  children: React.ReactElement;
-}
-
-const HideOnScroll: React.FC<HideOnScrollProps> = ({ children }) => {
-  const trigger = useScrollTrigger();
-  return (
-    <Slide appear={false} direction="down" in={!trigger}>
-      {children}
-    </Slide>
-  );
-};
+import { HideOnScroll } from "./HideOnScroll";
+import { useWindowDimensions } from "../../hooks/useWindowDimensions";
 
 const UserButtons: React.FC = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -157,17 +144,15 @@ export const Header = () => {
         <AppBar elevation={0}>
           <Toolbar disableGutters>
             <Wrapper
-              noPadding
               elevation={0}
               sx={{
-                px: 3,
                 height: 64,
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center"
               }}
             >
-              <StyledLink href="/">Main page</StyledLink>
+              <StyledLink href="/">Home</StyledLink>
               <StyledLink href="/community">Communities</StyledLink>
               <Box display="flex" gap={4}>
                 <UserButtons />
