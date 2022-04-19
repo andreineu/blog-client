@@ -1,20 +1,21 @@
 import { LoadingButton } from "@mui/lab";
-import { Box, ButtonProps, Typography } from "@mui/material";
+import { Box, ButtonProps } from "@mui/material";
 import React from "react";
 import { PageInfo } from "../../generated/graphql";
-import { CheckIcon } from "../Icons";
 
 interface PaginationProps {
   pageInfo?: PageInfo;
   onClick: () => void;
   loading: boolean;
+  emptyMessage: React.ReactNode;
   buttonProps?: Omit<ButtonProps, "onClick">;
 }
 
-export const Pagination: React.FC<PaginationProps> = ({
+export const PaginationButton: React.FC<PaginationProps> = ({
   pageInfo,
   loading,
   onClick,
+  emptyMessage,
   buttonProps = {}
 }) => {
   return (
@@ -30,8 +31,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         </LoadingButton>
       ) : (
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Typography>There are no posts left</Typography>
-          <CheckIcon sx={{ color: (th) => th.palette.success.main }} />
+          {emptyMessage}
         </Box>
       )}
     </>
