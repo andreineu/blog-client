@@ -1,5 +1,11 @@
 import React from "react";
-import { Box, Divider, Typography } from "@mui/material";
+import {
+  Box,
+  Divider,
+  Typography,
+  useMediaQuery,
+  useTheme
+} from "@mui/material";
 
 import { Post as PostType } from "../../generated/graphql";
 
@@ -11,26 +17,33 @@ import { PostBody } from "./PostBody";
 import Link from "../Link";
 import { CommentIcon } from "../Icons";
 
-const StyledBox: React.FC = (props) => (
-  <Box
-    sx={{
-      display: "flex",
-      alignItems: "center",
-      gap: 3,
-      mx: -3,
-      mb: -2,
-      borderRadius: 1,
-      borderTopRightRadius: 0,
-      borderTopLeftRadius: 0,
-      px: 3,
-      py: 2,
-      color: "text.secondary",
-      bgcolor: (th) => th.palette.background.default
-    }}
-  >
-    {props.children}
-  </Box>
-);
+const StyledBox: React.FC = (props) => {
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down("md"));
+  return (
+    <Box
+      sx={[
+        {
+          display: "flex",
+          alignItems: "center",
+          gap: 3,
+          mx: -3,
+          mb: -2,
+          borderRadius: 1,
+          borderTopRightRadius: 0,
+          borderTopLeftRadius: 0,
+          color: "text.secondary",
+          bgcolor: (th) => th.palette.background.default
+        },
+        !matches
+          ? { px: 3, py: 2 }
+          : { px: 3, py: 1, svg: { transform: "scale(0.9)" } }
+      ]}
+    >
+      {props.children}
+    </Box>
+  );
+};
 
 interface PostProps {
   post: PostType;

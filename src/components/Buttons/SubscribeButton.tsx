@@ -97,8 +97,6 @@ export const SubscribeButton: React.FC<SubscribeButtonProps> = ({
 
     await followCommunity({
       variables: { action, communityId: communityId! },
-      optimisticResponse: { __typename: "Mutation", followCommunity: true },
-
       update: (cache) =>
         updateCommunityStatus(
           cache,

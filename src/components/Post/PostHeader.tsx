@@ -1,5 +1,11 @@
 import React from "react";
-import { Avatar, Box, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Typography,
+  useMediaQuery,
+  useTheme
+} from "@mui/material";
 import { formatDistanceToNow } from "date-fns";
 
 import Link from "../Link";
@@ -24,29 +30,46 @@ export const PostHeader: React.FC<PostHeaderProps> = ({
   username,
   postId
 }) => {
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <>
       <Box
-        sx={{
-          display: "flex",
-          gap: 1,
-          alignItems: "center",
-          position: "relative"
-        }}
+        sx={[
+          {
+            display: "flex",
+            gap: 1,
+            alignItems: "center",
+            position: "relative"
+          },
+          matches && { mb: 1 }
+        ]}
       >
-        <Avatar sx={{ height: 20, width: 20 }} src={avatar} />
-        <Link
-          sx={{ color: (th) => th.palette.text.primary }}
-          underline="hover"
-          variant="subtitle1"
-          href={`/user/${username}`}
-        >
-          {username}
-        </Link>
-
-        <Typography color="text.secondary" sx={{ fontSize: 14 }}>
-          {formatDistanceToNow(new Date(+createdAt), { addSuffix: true })}
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Avatar sx={{ height: 32, width: 32 }} src={avatar} />
+          <Box
+            sx={[
+              !matches && {
+                display: "flex",
+                alignItems: "center",
+                gap: 1
+              },
+              matches && { gap: 0 }
+            ]}
+          >
+            <Link
+              sx={{ color: (th) => th.palette.text.primary, fontSize: 20 }}
+              underline="hover"
+              variant="subtitle1"
+              href={`/user/${username}`}
+            >
+              {username}
+            </Link>
+            <Typography color="text.secondary" sx={{ fontSize: 14 }}>
+              {formatDistanceToNow(new Date(+createdAt), { addSuffix: true })}
+            </Typography>
+          </Box>
+        </Box>
         {community && <CommunityBadge community={community} />}
       </Box>
       <Box>

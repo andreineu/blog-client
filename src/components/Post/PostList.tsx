@@ -23,6 +23,9 @@ import {
 
 import { PaginationButton } from "../Buttons";
 import { Dropdown } from "../Dropdown";
+import { PostSkeleton } from "./PostSkeleton";
+import { repeat } from "../../utils/repeat";
+import { CheckIcon } from "../Icons";
 
 interface PostListProps {
   options?: Apollo.QueryHookOptions<PostsQuery, PostsQueryVariables>;
@@ -98,7 +101,7 @@ export const PostList: React.FC<PostListProps> = ({ options }) => {
 
       <Stack spacing={4} alignItems="center">
         {error && <Typography>Error ocurred when fetching data</Typography>}
-        {loading && !data?.posts && <Typography>loading...</Typography>}
+        {loading && !data?.posts && repeat(3, (i) => <PostSkeleton key={i} />)}
         {data?.posts && (
           <>
             {data?.posts.items.map((p) => (
@@ -114,6 +117,12 @@ export const PostList: React.FC<PostListProps> = ({ options }) => {
         sx={{ my: 4 }}
       >
         <PaginationButton
+          emptyMessage={
+            <>
+              <Typography>there are no more posts left</Typography>
+              <CheckIcon sx={{ color: (th) => th.palette.success.main }} />
+            </>
+          }
           loading={loading}
           onClick={handleFetchMore}
           pageInfo={data?.posts?.pageInfo}
